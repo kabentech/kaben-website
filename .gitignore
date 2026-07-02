@@ -23,7 +23,6 @@ TestResults.xml
 node_modules
 .venv
 .env
-.env.local
 dist
 .DS_Store
 npm-debug.log*

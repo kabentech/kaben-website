@@ -1,3 +1,5 @@
+import React from 'react';
+
 export function LogoIcon() {
   return (
     <svg viewBox="0 0 85 94" className="w-10 h-10">
