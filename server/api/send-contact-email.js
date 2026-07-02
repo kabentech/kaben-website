@@ -56,6 +56,8 @@ export default async function sendContactEmailHandler(req, res) {
       },
     });
 
+    await transporter.verify();
+
     const htmlBody = `
       <div style="font-family:Arial,sans-serif;color:#111;line-height:1.6;">
         <h2>Nova mensagem de contato</h2>
