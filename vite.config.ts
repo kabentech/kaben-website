@@ -13,6 +13,29 @@ export default defineConfig(({ mode }) => {
     },
     define: {
       'process.env': JSON.stringify(env)
-    }
+    },
+    server: {
+      proxy: {
+        "/api/v1": {
+          target: "http://localhost:9001/",
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api\/v1/, ""),
+        },
+      },
+      port: 9000,
+    },
+    // build: {
+    //   outDir: "../.local/vite/dist",
+    //   assetsDir: "assets",
+    //   sourcemap: true,
+    //   manifest: true,
+    //   rollupOptions: {
+    //     output: {
+    //       manualChunks: {
+    //         react: ["react", "react-dom"],
+    //       },
+    //     },
+    //   },
+    // },
   };
 });

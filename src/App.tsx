@@ -1,13 +1,13 @@
 import React from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
+import Clients from './components/Clients';
 import Solutions from './components/Solutions';
 import Technology from './components/Technology';
 import Consulting from './components/Consulting';
 import About from './components/About';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
-import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
 
 export default function App() {
   return (
@@ -19,10 +19,9 @@ export default function App() {
         <Solutions />
         <Technology />
         <Consulting />
+        {/* <Clients /> */}
         <About />
-        <GoogleReCaptchaProvider reCaptchaKey={process.env.RECAPTCHA_SITE_KEY || ""}>
-          <Contact />
-        </GoogleReCaptchaProvider>
+        <Contact />
         <Footer />
       </main>
 
