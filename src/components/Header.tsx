@@ -1,5 +1,4 @@
-import React from 'react';
-import { LogoIcon, LogoFull } from './Logo';
+import { LogoFull } from './Logo';
 
 export default function Header() {
   return (

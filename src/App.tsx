@@ -1,7 +1,5 @@
-import React from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
-import Clients from './components/Clients';
 import Solutions from './components/Solutions';
 import Technology from './components/Technology';
 import Consulting from './components/Consulting';
@@ -25,7 +23,7 @@ export default function App() {
         <Footer />
       </main>
 
-      <style jsx>{`
+      <style>{`
         html { scroll-behavior: smooth; }
         ::selection { background: rgba(122, 88, 255, 0.25); }
       `}</style>
