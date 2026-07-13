@@ -122,26 +122,37 @@ export default function Contact() {
         }),
       });
 
-      const data = await response.json();
+      const contentType = response.headers.get('content-type') || '';
+      const isJson = contentType.includes('application/json');
+      const data = isJson ? await response.json() : await response.text();
 
       if (response.ok) {
+        const successMessage = typeof data === 'string'
+          ? data
+          : data?.message || 'Mensagem enviada com sucesso!';
+
         setSubmitStatus({
           type: 'success',
-          message: data.message || 'Mensagem enviada com sucesso!',
+          message: successMessage,
         });
         setFormData({ name: '', email: '', company: '', message: '' });
         setRecaptchaToken(null);
         recaptchaRef.current?.reset();
       } else {
+        const errorMessage = typeof data === 'string'
+          ? data
+          : data?.error || 'Erro ao enviar mensagem. Tente novamente.';
+
         setSubmitStatus({
           type: 'error',
-          message: data.error || 'Erro ao enviar mensagem. Tente novamente.',
+          message: errorMessage,
         });
       }
     } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erro ao enviar mensagem. Verifique sua conexão.';
       setSubmitStatus({
         type: 'error',
-        message: 'Erro ao enviar mensagem. Verifique sua conexão.',
+        message,
       });
       console.error('Contact submit error:', error);
     } finally {

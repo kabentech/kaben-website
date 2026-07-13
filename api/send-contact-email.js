@@ -2,15 +2,55 @@ import nodemailer from 'nodemailer';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+function parseBody(req) {
+  if (!req.body) return {};
+
+  if (typeof req.body === 'string') {
+    try {
+      return JSON.parse(req.body);
+    } catch {
+      return {};
+    }
+  }
+
+  return req.body;
+}
+
+function getSmtpErrorMessage(error) {
+  const message = error?.message || '';
+
+  if (error?.code === 'EAUTH' || error?.responseCode === 534 || message.includes('Application-specific password required')) {
+    return 'Falha na autenticação SMTP. Para Gmail, use uma senha de aplicativo (App Password).';
+  }
+
+  if (error?.code === 'ECONNECTION' || error?.code === 'ETIMEDOUT' || message.includes('ECONN')) {
+    return 'Não foi possível conectar ao servidor SMTP. Verifique o host e a porta.';
+  }
+
+  return 'Erro interno ao enviar e-mail. Verifique as configurações SMTP.';
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Método não permitido. Use POST.' });
   }
 
-  const { name, email, company, message, recaptchaToken } = req.body || {};
+  const body = parseBody(req);
+  const name = String(body.name || '').trim();
+  const email = String(body.email || '').trim();
+  const company = String(body.company || '').trim();
+  const message = String(body.message || '').trim();
+  const recaptchaToken = String(body.recaptchaToken || body.token || '').trim();
 
-  if (!name || !email || !message || !recaptchaToken) {
+  if (!name || !email || !message) {
     return res.status(400).json({ error: 'Campos obrigatórios ausentes.' });
+  }
+
+  const isLocalDevelopment = process.env.NODE_ENV !== 'production';
+  const shouldSkipRecaptcha = isLocalDevelopment && (!recaptchaToken || recaptchaToken === 'dummy');
+
+  if (!shouldSkipRecaptcha && !recaptchaToken) {
+    return res.status(400).json({ error: 'Por favor, complete o reCAPTCHA.' });
   }
 
   if (!EMAIL_REGEX.test(email)) {
@@ -22,16 +62,23 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Chave secreta do reCAPTCHA não configurada.' });
   }
 
-  const recaptchaResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `secret=${encodeURIComponent(recaptchaSecret)}&response=${encodeURIComponent(recaptchaToken)}`,
-  });
+  if (!shouldSkipRecaptcha) {
+    try {
+      const recaptchaResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `secret=${encodeURIComponent(recaptchaSecret)}&response=${encodeURIComponent(recaptchaToken)}`,
+      });
 
-  const recaptchaData = await recaptchaResponse.json();
-  if (!recaptchaData.success) {
-    console.error('reCAPTCHA falhou:', recaptchaData);
-    return res.status(400).json({ error: 'Verificação reCAPTCHA falhou.' });
+      const recaptchaData = await recaptchaResponse.json();
+      if (!recaptchaData.success) {
+        console.error('reCAPTCHA falhou:', recaptchaData);
+        return res.status(400).json({ error: 'Verificação reCAPTCHA falhou.' });
+      }
+    } catch (error) {
+      console.error('Erro ao validar reCAPTCHA:', error);
+      return res.status(502).json({ error: 'Erro ao validar reCAPTCHA.' });
+    }
   }
 
   const smtpHost = process.env.SMTP_HOST;
@@ -78,6 +125,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ success: true, message: 'Mensagem enviada com sucesso!' });
   } catch (error) {
     console.error('Erro ao enviar e-mail:', error);
-    return res.status(500).json({ error: 'Erro interno ao enviar e-mail.' });
+    return res.status(500).json({ error: getSmtpErrorMessage(error) });
   }
 }
