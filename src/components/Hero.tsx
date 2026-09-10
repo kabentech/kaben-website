@@ -20,16 +20,16 @@ export default function Hero() {
       <div className="max-w-7xl mx-auto px-6 py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <p className="text-sm text-[#8aa1ff] font-medium">Kaben • Data + AI + Automation</p>
+            <p className="text-sm text-[#8aa1ff] font-medium">Kaben • Tecnologia & Inovação</p>
             <h1 className="mt-6 text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
-              Transformamos <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#7EE7FF] to-[#9B7CFF]">dados</span> e processos em resultado, com engenharia de dados, IA e automação.
+              Transformamos <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#7EE7FF] to-[#9B7CFF]">dados</span> em resultado, com tecnologia, <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#7EE7FF] to-[#9B7CFF]">IA</span> e automação.
             </h1>
 
             <p className="mt-6 text-gray-300 max-w-xl">Ajudamos empresas a organizar seus dados, aplicar inteligência artificial de forma prática e automatizar processos manuais — reduzindo esforço operacional e melhorando decisões de negócio.</p>
 
             <div className="mt-8 flex gap-4">
-              <a href="#contact" className="inline-flex items-center gap-3 px-5 py-3 rounded-md bg-gradient-to-r from-[#5EE7FF] to-[#8A5CFF] text-black font-medium shadow-md">Descubra onde dados e IA podem gerar impacto</a>
-              <a href="#pillars" className="inline-flex items-center gap-3 px-5 py-3 rounded-md border border-gray-700 hover:bg-white/3">Conheça nossas soluções</a>
+              <a href="#contact" className="inline-flex items-center gap-3 px-5 py-3 rounded-md bg-gradient-to-r from-[#5EE7FF] to-[#8A5CFF] text-black font-medium shadow-md">Vamos mapear seu desafio</a>
+              <a href="#pillars" className="inline-flex items-center gap-3 px-5 py-3 rounded-md border border-gray-700 hover:bg-white/3">Nossas soluções</a>
             </div>
 
             <div className="mt-10 grid grid-cols-2 gap-4 max-w-md text-xs text-gray-400">
@@ -39,7 +39,7 @@ export default function Hero() {
               </div>
               <div className="flex flex-col">
                 <span className="text-xs text-gray-300 font-semibold">Foco</span>
-                <span>Data Engineering, IA aplicada e Automação</span>
+                <span>Data Engineering, IA e Automação</span>
               </div>
             </div>
           </motion.div>
@@ -51,7 +51,7 @@ export default function Hero() {
                 <div className="text-xs text-gray-400">Status: <span className="text-green-300">Ativo</span></div>
               </div>
 
-              <pre className="bg-transparent text-sm font-mono text-gray-100 p-4 rounded-md overflow-auto">{`GET /insights?company=abc123
+              <pre className="bg-transparent text-sm font-mono text-gray-100 p-4 rounded-md overflow-auto">{`GET /insights?company=kaben
 200 OK
 {
   "manualWorkReduced": ">40%",
