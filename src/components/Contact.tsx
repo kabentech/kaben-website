@@ -31,6 +31,7 @@ export default function Contact() {
   });
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRecaptchaLoading, setIsRecaptchaLoading] = useState(true);
   const [submitStatus, setSubmitStatus] = useState<{
     type: 'success' | 'error' | null;
     message: string;
@@ -78,11 +79,13 @@ export default function Contact() {
 
   const handleRecaptchaChange = (token: string | null) => {
     setRecaptchaToken(token);
+    setIsRecaptchaLoading(false);
     setSubmitStatus({ type: null, message: '' });
   };
 
   const handleRecaptchaExpired = () => {
     setRecaptchaToken(null);
+    setIsRecaptchaLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -258,9 +261,23 @@ export default function Contact() {
               <div className="text-sm text-gray-400">
                 Nós responderemos em até 2 dias úteis.
               </div>
+
+              {!recaptchaToken && isRecaptchaLoading && (
+                <div className="text-sm text-gray-400 italic">
+                  Aguardando validação do reCAPTCHA...
+                </div>
+              )}
+
+              {!recaptchaToken && !isRecaptchaLoading && (
+                <div className="text-sm text-amber-400">
+                  Por favor, complete o reCAPTCHA acima.
+                </div>
+              )}
+
               <button
                 type="submit"
                 disabled={!isFormValid || isSubmitting}
+                hidden={!recaptchaToken}
                 className="px-6 py-3 rounded-md bg-gradient-to-r from-[#5EE7FF] to-[#8A5CFF] text-black font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
               >
                 {isSubmitting ? 'Enviando...' : 'Enviar mensagem'}

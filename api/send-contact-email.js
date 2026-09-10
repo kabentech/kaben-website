@@ -2,6 +2,12 @@ import nodemailer from 'nodemailer';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Rate limiting: Map para armazenar tentativas por IP
+// Estrutura: { ip: { count: number, resetTime: timestamp } }
+const rateLimitStore = new Map();
+const RATE_LIMIT_WINDOW = 3600000; // 1 hora em ms
+const MAX_REQUESTS_PER_HOUR = 5;
+
 function parseBody(req) {
   if (!req.body) return {};
 
@@ -14,6 +20,58 @@ function parseBody(req) {
   }
 
   return req.body;
+}
+
+// Escapa caracteres HTML para evitar XSS
+function escapeHtml(text) {
+  const htmlEscapeMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  };
+  return text.replace(/[&<>"']/g, (char) => htmlEscapeMap[char]);
+}
+
+// Obtém IP do cliente (suporta proxies como Vercel)
+function getClientIp(req) {
+  return (
+    req.headers['x-forwarded-for']?.split(',')[0] ||
+    req.headers['x-real-ip'] ||
+    req.socket?.remoteAddress ||
+    'unknown'
+  ).trim();
+}
+
+// Valida rate limit por IP
+function checkRateLimit(ip) {
+  const now = Date.now();
+  const limitData = rateLimitStore.get(ip);
+
+  if (!limitData) {
+    rateLimitStore.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+    return { allowed: true, remaining: MAX_REQUESTS_PER_HOUR - 1 };
+  }
+
+  if (now > limitData.resetTime) {
+    rateLimitStore.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+    return { allowed: true, remaining: MAX_REQUESTS_PER_HOUR - 1 };
+  }
+
+  if (limitData.count >= MAX_REQUESTS_PER_HOUR) {
+    return {
+      allowed: false,
+      remaining: 0,
+      resetTime: limitData.resetTime,
+    };
+  }
+
+  limitData.count += 1;
+  return {
+    allowed: true,
+    remaining: MAX_REQUESTS_PER_HOUR - limitData.count,
+  };
 }
 
 function getSmtpErrorMessage(error) {
@@ -30,9 +88,29 @@ function getSmtpErrorMessage(error) {
   return 'Erro interno ao enviar e-mail. Verifique as configurações SMTP.';
 }
 
+function getRateLimitErrorMessage(resetTime) {
+  const minutesRemaining = Math.ceil((resetTime - Date.now()) / 60000);
+  return `Muitas tentativas. Tente novamente em ${minutesRemaining} minuto(s).`;
+}
+
 export default async function handler(req, res) {
+  // Headers de segurança
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Content-Type', 'application/json');
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Método não permitido. Use POST.' });
+  }
+
+  // Validar rate limit
+  const clientIp = getClientIp(req);
+  const rateLimitCheck = checkRateLimit(clientIp);
+
+  if (!rateLimitCheck.allowed) {
+    return res.status(429).json({
+      error: getRateLimitErrorMessage(rateLimitCheck.resetTime),
+    });
   }
 
   const body = parseBody(req);
@@ -71,10 +149,33 @@ export default async function handler(req, res) {
       });
 
       const recaptchaData = await recaptchaResponse.json();
+
       if (!recaptchaData.success) {
         console.error('reCAPTCHA falhou:', recaptchaData);
         return res.status(400).json({ error: 'Verificação reCAPTCHA falhou.' });
       }
+
+      // Validar score reCAPTCHA v3 (threshold: 0.5)
+      // Score próximo a 1: humano confiável
+      // Score próximo a 0: provável bot
+      const SCORE_THRESHOLD = 0.5;
+      if (typeof recaptchaData.score === 'number' && recaptchaData.score < SCORE_THRESHOLD) {
+        console.warn(`reCAPTCHA score baixo (${recaptchaData.score}), rejeitando`, {
+          ip: clientIp,
+          email,
+        });
+        return res.status(400).json({
+          error: 'Validação falhou. Tente novamente em alguns momentos.',
+        });
+      }
+
+      // Log para analytics (opcional: pode ser salvo em DB)
+      console.log('reCAPTCHA validado', {
+        score: recaptchaData.score,
+        action: recaptchaData.action,
+        ip: clientIp,
+        email,
+      });
     } catch (error) {
       console.error('Erro ao validar reCAPTCHA:', error);
       return res.status(502).json({ error: 'Erro ao validar reCAPTCHA.' });
@@ -102,14 +203,19 @@ export default async function handler(req, res) {
     },
   });
 
+  // Escapa HTML para evitar XSS
+  const escapedName = escapeHtml(name);
+  const escapedCompany = escapeHtml(company);
+  const escapedMessage = escapeHtml(message);
+
   const htmlBody = `
     <div style="font-family:Arial,sans-serif;color:#111;line-height:1.6;">
       <h2>Nova mensagem de contato</h2>
-      <p><strong>Nome:</strong> ${name}</p>
+      <p><strong>Nome:</strong> ${escapedName}</p>
       <p><strong>E-mail:</strong> ${email}</p>
-      ${company ? `<p><strong>Empresa:</strong> ${company}</p>` : ''}
+      ${escapedCompany ? `<p><strong>Empresa:</strong> ${escapedCompany}</p>` : ''}
       <p><strong>Mensagem:</strong></p>
-      <p>${message.replace(/\n/g, '<br>')}</p>
+      <p>${escapedMessage.replace(/\n/g, '<br>')}</p>
     </div>
   `;
 
@@ -117,7 +223,7 @@ export default async function handler(req, res) {
     await transporter.sendMail({
       from: smtpUser,
       to: mailTo,
-      subject: `Nova mensagem de contato - ${name}`,
+      subject: `Nova mensagem de contato - ${escapedName}`,
       html: htmlBody,
       replyTo: email,
     });
