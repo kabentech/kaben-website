@@ -1,18 +1,20 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import {
-  CodeXml,
-  FolderCode,
-  BetweenHorizonalStart,
-  Move3D
+  Database,
+  Workflow,
+  Sparkles,
+  TrendingUp,
+  Code2
 } from 'lucide-react';
 
 
 const solutions = [
-  { title: 'Desenvolvimento Sob Demanda', desc: 'Portais, plataformas internas, SaaS e produtos digitais escaláveis.', icon: CodeXml },
-  { title: 'APIs & Integrações', desc: 'Gateways, contratos OpenAPI, mensageria e conectores de ecossistema.', icon: FolderCode },
-  { title: 'Governança de Dados', desc: 'Modelagem, políticas, lineage, catalog e compliance.', icon: BetweenHorizonalStart },
-  { title: 'Consultoria & Estratégia', desc: 'Roadmaps, modernização e transformação digital com foco em ROI.', icon: Move3D }
+  { title: 'Data Governance & Platforms', desc: 'Governança centralizada, lineage tracking, políticas de conformidade, catalogação automática de dados.', icon: Database },
+  { title: 'DataOps & Automação', desc: 'Pipelines de dados automatizadas, orchestration, transformações e validação em tempo real.', icon: Workflow },
+  { title: 'AI & Copilots Corporativos', desc: 'Assistentes de IA integrados, MLOps, Agentic AI para automação inteligente.', icon: Sparkles },
+  { title: 'Consultoria Estratégica', desc: 'Roadmaps de transformação digital, market intelligence, identificação de use cases, ROI.', icon: TrendingUp },
+  { title: 'Engenharia de Plataformas', desc: 'Custom AI/ML, cloud data architecture, API-first, segurança e compliance.', icon: Code2 }
 ];
 
 export default function Solutions() {
@@ -20,11 +22,11 @@ export default function Solutions() {
     <section id="solutions" className="py-24 border-t border-gray-900">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-          <h2 className="text-3xl font-bold">Nossas soluções</h2>
-          <p className="mt-3 text-gray-400 max-w-2xl">Soluções orientadas a resultados — engenharia de software, APIs corporativas, arquitetura de dados e consultoria estratégica.</p>
+          <h2 className="text-3xl font-bold">Nossas Soluções</h2>
+          <p className="mt-3 text-gray-400 max-w-2xl">Soluções orientadas a resultados — governança de dados, automação, IA, consultoria estratégica e engenharia de plataformas cloud.</p>
         </motion.div>
 
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           {solutions.map((s, i) => (
             <motion.div
               key={s.title}

@@ -17,7 +17,7 @@ export default function Footer() {
         <div>
           <div className="text-xs text-gray-400">© {new Date().getFullYear()} Kaben. Todos os direitos reservados.</div>
         </div>
-        <div className="text-sm text-gray-400">Siga-nos: <span className="ml-2"><a href="#" target="_blank">LinkedIn</a> • <a href="#" target="_blank">GitHub</a> • <a href="#" target="_blank">Instagram</a> • <a href="#" target="_blank">Facebook</a></span></div>
+        <div className="text-sm text-gray-400">Siga-nos: <span className="ml-2"><a href="https://linkedin.com/company/kaben" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">LinkedIn</a> • <a href="https://github.com/kabentech" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">GitHub</a> • <a href="https://instagram.com/kabentech" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Instagram</a> • <a href="https://twitter.com/kabentech" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Twitter</a></span></div>
       </div>
     </footer>
   );

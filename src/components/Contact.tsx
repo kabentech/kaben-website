@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import ReCAPTCHA from 'react-google-recaptcha';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -17,7 +17,8 @@ type ContactFormErrors = {
   message: string;
 };
 
-export default function Contact() {
+function ContactFormContent() {
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const [formData, setFormData] = useState<ContactFormData>({
     name: '',
     email: '',
@@ -29,15 +30,11 @@ export default function Contact() {
     email: '',
     message: '',
   });
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{
     type: 'success' | 'error' | null;
     message: string;
   }>({ type: null, message: '' });
-  const recaptchaRef = useRef<ReCAPTCHA>(null);
-
-  const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 
   const validateForm = () => {
     const newErrors = { name: '', email: '', message: '' };
@@ -76,15 +73,6 @@ export default function Contact() {
     }));
   };
 
-  const handleRecaptchaChange = (token: string | null) => {
-    setRecaptchaToken(token);
-    setSubmitStatus({ type: null, message: '' });
-  };
-
-  const handleRecaptchaExpired = () => {
-    setRecaptchaToken(null);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -96,18 +84,17 @@ export default function Contact() {
       return;
     }
 
-    if (!recaptchaToken) {
-      setSubmitStatus({
-        type: 'error',
-        message: 'Por favor, complete o reCAPTCHA.',
-      });
-      return;
-    }
-
     setIsSubmitting(true);
     setSubmitStatus({ type: null, message: '' });
 
     try {
+      // Execute reCAPTCHA v3
+      if (!executeRecaptcha) {
+        throw new Error('reCAPTCHA não está configurado');
+      }
+
+      const recaptchaToken = await executeRecaptcha('submit');
+
       const response = await fetch('/api/send-contact-email', {
         method: 'POST',
         headers: {
@@ -136,8 +123,6 @@ export default function Contact() {
           message: successMessage,
         });
         setFormData({ name: '', email: '', company: '', message: '' });
-        setRecaptchaToken(null);
-        recaptchaRef.current?.reset();
       } else {
         const errorMessage = typeof data === 'string'
           ? data
@@ -163,8 +148,7 @@ export default function Contact() {
   const isFormValid =
     !!formData.name.trim() &&
     EMAIL_REGEX.test(formData.email.trim()) &&
-    !!formData.message.trim() &&
-    !!recaptchaToken;
+    !!formData.message.trim();
 
   return (
     <section id="contact" className="py-24 border-t border-gray-900">
@@ -175,10 +159,9 @@ export default function Contact() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h3 className="text-2xl font-bold">Conecte-se com a Kaben</h3>
+          <h3 className="text-3xl font-bold">Conecte-se com a Kaben</h3>
           <p className="mt-3 text-gray-300">
-            Interessado em modernizar sua plataforma, integrar APIs ou melhorar a
-            governança de dados? Envie uma mensagem e vamos conversar.
+            Interessado em modernizar sua plataforma, automação de dados ou implementar IA corporativa? Envie uma mensagem e vamos conversar.
           </p>
 
           <form onSubmit={handleSubmit} className="mt-8 grid grid-cols-1 gap-4">
@@ -227,22 +210,6 @@ export default function Contact() {
               {errors.message && <p className="text-sm text-red-400">{errors.message}</p>}
             </div>
 
-            {recaptchaSiteKey ? (
-              <div className="flex justify-end">
-                <ReCAPTCHA
-                  ref={recaptchaRef}
-                  sitekey={recaptchaSiteKey}
-                  onChange={handleRecaptchaChange}
-                  onExpired={handleRecaptchaExpired}
-                  theme="dark"
-                />
-              </div>
-            ) : (
-              <div className="text-sm text-red-400">
-                A chave do reCAPTCHA não está configurada.
-              </div>
-            )}
-
             {submitStatus.type && (
               <div
                 className={`p-4 rounded-md ${submitStatus.type === 'success'
@@ -276,6 +243,15 @@ export default function Contact() {
           </div>
         </motion.div>
       </div>
-    </section>
-  );
-}
+
+        <style jsx>{`
+          .grecaptcha-badge {
+            visibility: hidden;
+          }
+        `}</style>
+      </section>
+    );
+  }
+
+export default ContactFormContent;
+

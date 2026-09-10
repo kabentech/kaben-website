@@ -20,12 +20,12 @@ export default function Hero() {
       <div className="max-w-7xl mx-auto px-6 py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <p className="text-sm text-[#8aa1ff] font-medium">Kaben • Tecnologia & Inovação</p>
+            <p className="text-sm text-[#8aa1ff] font-medium">Kaben • Plataformas de Dados & IA</p>
             <h1 className="mt-6 text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
-              Tecnologia que conecta <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#7EE7FF] to-[#9B7CFF]">inovação</span> e dados ao futuro do seu negócio.
+              Impulsione sua empresa com <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#7EE7FF] to-[#9B7CFF]">dados, automação e AI</span>. Plataformas SaaS B2B modernas para transformação digital.
             </h1>
 
-            <p className="mt-6 text-gray-300 max-w-xl">Desenvolvemos software sob demanda, APIs corporativas e estratégias de governança de dados para empresas que buscam performance, automação e decisões guiadas por dados.</p>
+            <p className="mt-6 text-gray-300 max-w-xl">Construímos plataformas escaláveis, pipelines de dados e soluções de IA para empresas consolidadas. Transformamos dados em vantagem competitiva.</p>
 
             <div className="mt-8 flex gap-4">
               <a href="#contact" className="inline-flex items-center gap-3 px-5 py-3 rounded-md bg-gradient-to-r from-[#5EE7FF] to-[#8A5CFF] text-black font-medium shadow-md">Solicitar proposta</a>
@@ -39,7 +39,7 @@ export default function Hero() {
               </div>
               <div className="flex flex-col">
                 <span className="text-xs text-gray-300 font-semibold">Foco</span>
-                <span>APIs, DataOps, Governança</span>
+                <span>Dados, Automação, AI</span>
               </div>
             </div>
           </motion.div>
@@ -51,11 +51,12 @@ export default function Hero() {
                 <div className="text-xs text-gray-400">Status: <span className="text-green-300">Online</span></div>
               </div>
 
-              <pre className="bg-transparent text-sm font-mono text-gray-100 p-4 rounded-md overflow-auto">{`GET /api/v1/insights?companyId=abc123
+              <pre className="bg-transparent text-sm font-mono text-gray-100 p-4 rounded-md overflow-auto">{`GET /api/v1/data-platform
 200 OK
 {
-  "revenueImpact": ">15%",
-  "recommendations": ["data-pipeline","api-gateway","policy-governance"]
+  "status": "processing",
+  "throughput": "1M+ events/sec",
+  "features": ["governance","lineage","ai"]
 }`}</pre>
             </div>
 

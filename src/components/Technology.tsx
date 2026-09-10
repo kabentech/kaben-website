@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 export default function Technology() {
   return (
-    <section id="tech" className="py-24">
+    <section id="technology" className="py-24">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <motion.div initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
@@ -21,19 +21,21 @@ export default function Technology() {
           <motion.div initial={{ opacity: 0, x: 10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
             <div className="rounded-2xl border border-gray-800 p-6 bg-gradient-to-b from-white/3 to-transparent">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 rounded-md bg-[#0f1724] flex items-center justify-center border border-gray-800">API</div>
+                <div className="w-12 h-12 rounded-md bg-[#0f1724] flex items-center justify-center border border-gray-800 text-xs font-bold">AI</div>
                 <div>
-                  <div className="text-sm text-gray-300 font-semibold">Platform Design</div>
-                  <div className="text-xs text-gray-500">Contracts • OpenAPI • Event Mesh</div>
+                  <div className="text-sm text-gray-300 font-semibold">Data Architecture</div>
+                  <div className="text-xs text-gray-500">Governance • Lineage • Automation</div>
                 </div>
               </div>
 
-              <div className="text-xs text-gray-400 font-mono overflow-x-auto">{`# components/serviceA
-- responsibilities: ingest
-- contracts: openapi: 3.0
+              <div className="text-xs text-gray-400 font-mono overflow-x-auto">{`# data-pipelines
+- governance: enabled
+- quality: real-time
+- orchestration: automated
 
-# infra
-default: k8s
+# ai-copilots
+- models: gpt4, claude
+- latency: <100ms
 `}</div>
             </div>
           </motion.div>

@@ -19,12 +19,11 @@ export default function Header() {
         </div>
 
         <nav className="hidden md:flex items-center gap-8 text-sm">
-          <a href="#hero" className="hover:text-white">Início</a>
-          <a href="#solutions" className="hover:text-white">Soluções</a>
-          <a href="#tech" className="hover:text-white">Tecnologia</a>
-          <a href="#consulting" className="hover:text-white">Consultoria</a>
-          <a href="#about" className="hover:text-white">Sobre</a>
-          <a href="#contact" className="hover:text-white">Contato</a>
+          <a href="#hero" className="hover:text-white transition-colors">Início</a>
+          <a href="#solutions" className="hover:text-white transition-colors">Soluções</a>
+          <a href="#technology" className="hover:text-white transition-colors">Tecnologia</a>
+          <a href="#about" className="hover:text-white transition-colors">Sobre</a>
+          <a href="#contact" className="hover:text-white transition-colors">Contato</a>
         </nav>
 
         <div className="flex items-center gap-3">

@@ -1,10 +1,8 @@
 import React from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
-import Clients from './components/Clients';
 import Solutions from './components/Solutions';
 import Technology from './components/Technology';
-import Consulting from './components/Consulting';
 import About from './components/About';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
@@ -15,13 +13,11 @@ export default function App() {
       <Header />
 
       <main className="pt-24">
-        <Hero />
-        <Solutions />
-        <Technology />
-        <Consulting />
-        {/* <Clients /> */}
-        <About />
-        <Contact />
+        <Hero id="hero" />
+        <Solutions id="solutions" />
+        <Technology id="technology" />
+        <About id="about" />
+        <Contact id="contact" />
         <Footer />
       </main>
 
