@@ -15,14 +15,13 @@ export default defineConfig(({ mode }) => {
       'process.env': JSON.stringify(env)
     },
     server: {
+      port: 9000,
       proxy: {
-        "/api": {
-          target: "http://localhost:3000",
+        '/api': {
+          target: 'http://localhost:3000',
           changeOrigin: true,
-          rewrite: (path) => path,
         },
       },
-      port: 9000,
     },
     // Frontend dev server runs on 9000, backend API runs on 3000 via proxy.
     // build: {

@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-gray-200 font-sans antialiased;
+  }
+
+  ::selection {
+    @apply bg-accent-to/30;
+  }
+}
+
+/* Oculta o badge padrão do reCAPTCHA v3 (aviso de uso fica no formulário) */
+.grecaptcha-badge {
+  visibility: hidden;
+}

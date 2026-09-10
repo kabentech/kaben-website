@@ -1,68 +1,58 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 
 export default function Hero() {
   return (
-    <section id="hero" className="relative min-h-[72vh] overflow-hidden">
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#06060A] via-[#071026] to-[#0b0710]" />
-        <svg className="absolute inset-0 w-full h-full opacity-10" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="lg" x1="0" x2="1">
-              <stop offset="0%" stopColor="#051124" />
-              <stop offset="100%" stopColor="#0b0410" />
-            </linearGradient>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#lg)" />
-        </svg>
-      </div>
+    <section id="hero" className="relative overflow-hidden">
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0A0A10] via-background to-background" />
+      <div className="absolute -top-40 right-0 -z-10 h-96 w-96 rounded-full bg-accent-to/10 blur-3xl" />
 
-      <div className="max-w-7xl mx-auto px-6 py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <p className="text-sm text-[#8aa1ff] font-medium">Kaben • Plataformas de Dados & IA</p>
-            <h1 className="mt-6 text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
-              Impulsione sua empresa com <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#7EE7FF] to-[#9B7CFF]">dados, automação e AI</span>. Plataformas SaaS B2B modernas para transformação digital.
-            </h1>
+      <div className="max-w-6xl mx-auto px-6 pt-32 pb-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+          <p className="text-sm font-medium text-accent-from">Plataformas de Dados & IA</p>
+          <h1 className="mt-5 text-4xl md:text-5xl font-bold tracking-tight leading-[1.1]">
+            Transforme dados em decisões, não em planilhas.
+          </h1>
+          <p className="mt-6 text-lg text-gray-400 max-w-lg">
+            Construímos plataformas de dados, automação e IA para empresas que precisam de resultado — não de mais um projeto de TI parado na gaveta.
+          </p>
 
-            <p className="mt-6 text-gray-300 max-w-xl">Construímos plataformas escaláveis, pipelines de dados e soluções de IA para empresas consolidadas. Transformamos dados em vantagem competitiva.</p>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <a
+              href="#contact"
+              className="px-6 py-3 rounded-full bg-accent-gradient text-black font-semibold hover:opacity-90 transition-opacity"
+            >
+              Falar com um especialista
+            </a>
+            <a
+              href="#solutions"
+              className="px-6 py-3 rounded-full border border-line text-gray-200 hover:border-gray-600 transition-colors"
+            >
+              Ver soluções
+            </a>
+          </div>
 
-            <div className="mt-8 flex gap-4">
-              <a href="#contact" className="inline-flex items-center gap-3 px-5 py-3 rounded-md bg-gradient-to-r from-[#5EE7FF] to-[#8A5CFF] text-black font-medium shadow-md">Solicitar proposta</a>
-              <a href="#solutions" className="inline-flex items-center gap-3 px-5 py-3 rounded-md border border-gray-700 hover:bg-white/3">Conheça nossas soluções</a>
+          <div className="mt-12 flex items-center gap-3 text-xs text-muted">
+            <span>Empresas de médio e grande porte</span>
+            <span className="w-1 h-1 rounded-full bg-muted" />
+            <span>Dados · Automação · IA</span>
+          </div>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.1 }}>
+          <div className="rounded-2xl border border-line bg-surface/60 p-6 font-mono text-sm shadow-2xl shadow-black/40">
+            <div className="flex items-center justify-between text-xs text-muted mb-4">
+              <span>data-platform · api/v1</span>
+              <span className="flex items-center gap-1.5 text-emerald-400">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> online
+              </span>
             </div>
-
-            <div className="mt-10 grid grid-cols-2 gap-4 max-w-md text-xs text-gray-400">
-              <div className="flex flex-col">
-                <span className="text-xs text-gray-300 font-semibold">Clientes</span>
-                <span>Empresas de médio e grande porte</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xs text-gray-300 font-semibold">Foco</span>
-                <span>Dados, Automação, AI</span>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="relative">
-            <div className="rounded-2xl border border-gray-800 p-6 bg-gradient-to-b from-white/3 to-white/2 shadow-2xl">
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-xs text-gray-400">API • v1</div>
-                <div className="text-xs text-gray-400">Status: <span className="text-green-300">Online</span></div>
-              </div>
-
-              <pre className="bg-transparent text-sm font-mono text-gray-100 p-4 rounded-md overflow-auto">{`GET /api/v1/data-platform
-200 OK
-{
-  "status": "processing",
+            <pre className="text-gray-300 whitespace-pre-wrap">{`{
   "throughput": "1M+ events/sec",
-  "features": ["governance","lineage","ai"]
+  "governance": "enabled",
+  "ai_copilots": "active"
 }`}</pre>
-            </div>
-
-            <div className="absolute -right-8 -bottom-8 w-48 h-48 rounded-xl bg-gradient-to-br from-[#6EE7B7]/30 to-[#8A5CFF]/30 blur-3xl" />
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

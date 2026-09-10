@@ -22,7 +22,8 @@ rad.json
 TestResults.xml
 node_modules
 .venv
-.env
+.env*
+!.env.example
 dist
 .DS_Store
 npm-debug.log*

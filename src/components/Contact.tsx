@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
@@ -11,33 +11,31 @@ type ContactFormData = {
   message: string;
 };
 
-type ContactFormErrors = {
-  name: string;
-  email: string;
-  message: string;
-};
+type ContactFormErrors = Partial<Record<'name' | 'email' | 'message', string>>;
 
-function ContactFormContent() {
+export default function Contact() {
   const { executeRecaptcha } = useGoogleReCaptcha();
+  const [recaptchaReady, setRecaptchaReady] = useState(false);
   const [formData, setFormData] = useState<ContactFormData>({
     name: '',
     email: '',
     company: '',
     message: '',
   });
-  const [errors, setErrors] = useState<ContactFormErrors>({
-    name: '',
-    email: '',
-    message: '',
-  });
+  const [errors, setErrors] = useState<ContactFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{
     type: 'success' | 'error' | null;
     message: string;
   }>({ type: null, message: '' });
 
+  // reCAPTCHA v3 carrega de forma assíncrona; só liberamos o botão de envio quando ele estiver pronto.
+  useEffect(() => {
+    setRecaptchaReady(!!executeRecaptcha);
+  }, [executeRecaptcha]);
+
   const validateForm = () => {
-    const newErrors = { name: '', email: '', message: '' };
+    const newErrors: ContactFormErrors = {};
 
     if (!formData.name.trim()) {
       newErrors.name = 'Por favor, informe seu nome.';
@@ -54,7 +52,7 @@ function ContactFormContent() {
     }
 
     setErrors(newErrors);
-    return !newErrors.name && !newErrors.email && !newErrors.message;
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleInputChange = (
@@ -69,7 +67,7 @@ function ContactFormContent() {
 
     setErrors((current) => ({
       ...current,
-      [name]: '',
+      [name]: undefined,
     }));
   };
 
@@ -84,15 +82,18 @@ function ContactFormContent() {
       return;
     }
 
+    if (!executeRecaptcha) {
+      setSubmitStatus({
+        type: 'error',
+        message: 'Verificação de segurança ainda não carregou. Aguarde um instante e tente novamente.',
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitStatus({ type: null, message: '' });
 
     try {
-      // Execute reCAPTCHA v3
-      if (!executeRecaptcha) {
-        throw new Error('reCAPTCHA não está configurado');
-      }
-
       const recaptchaToken = await executeRecaptcha('submit');
 
       const response = await fetch('/api/send-contact-email', {
@@ -151,107 +152,119 @@ function ContactFormContent() {
     !!formData.message.trim();
 
   return (
-    <section id="contact" className="py-24 border-t border-gray-900">
-      <div className="max-w-3xl mx-auto px-6">
+    <section id="contact" className="py-24 border-t border-line">
+      <div className="max-w-2xl mx-auto px-6">
         <motion.div
-          initial={{ opacity: 0, y: 8 }}
+          initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h3 className="text-3xl font-bold">Conecte-se com a Kaben</h3>
-          <p className="mt-3 text-gray-300">
-            Interessado em modernizar sua plataforma, automação de dados ou implementar IA corporativa? Envie uma mensagem e vamos conversar.
+          <h2 className="text-3xl font-bold">Fale com a gente</h2>
+          <p className="mt-3 text-gray-400">
+            Conte um pouco sobre o desafio da sua empresa. Respondemos em até 2 dias úteis.
           </p>
 
-          <form onSubmit={handleSubmit} className="mt-8 grid grid-cols-1 gap-4">
+          <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1">
+              <div>
                 <input
                   type="text"
                   name="name"
                   placeholder="Nome"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full p-3 rounded-md bg-[#0b0b0d] border border-gray-800 text-gray-100 focus:border-[#5EE7FF] focus:outline-none transition-colors"
+                  aria-invalid={!!errors.name}
+                  className="w-full p-3 rounded-lg bg-surface border border-line text-gray-100 placeholder:text-muted focus:border-accent-from focus:outline-none transition-colors"
                 />
-                {errors.name && <p className="text-sm text-red-400">{errors.name}</p>}
+                {errors.name && <p className="mt-1 text-sm text-red-400">{errors.name}</p>}
               </div>
 
-              <div className="space-y-1">
+              <div>
                 <input
                   type="email"
                   name="email"
                   placeholder="E-mail"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full p-3 rounded-md bg-[#0b0b0d] border border-gray-800 text-gray-100 focus:border-[#5EE7FF] focus:outline-none transition-colors"
+                  aria-invalid={!!errors.email}
+                  className="w-full p-3 rounded-lg bg-surface border border-line text-gray-100 placeholder:text-muted focus:border-accent-from focus:outline-none transition-colors"
                 />
-                {errors.email && <p className="text-sm text-red-400">{errors.email}</p>}
+                {errors.email && <p className="mt-1 text-sm text-red-400">{errors.email}</p>}
               </div>
             </div>
+
             <input
               type="text"
               name="company"
               placeholder="Empresa (opcional)"
               value={formData.company}
               onChange={handleInputChange}
-              className="w-full p-3 rounded-md bg-[#0b0b0d] border border-gray-800 text-gray-100 focus:border-[#5EE7FF] focus:outline-none transition-colors"
+              className="w-full p-3 rounded-lg bg-surface border border-line text-gray-100 placeholder:text-muted focus:border-accent-from focus:outline-none transition-colors"
             />
-            <div className="space-y-1">
+
+            <div>
               <textarea
                 name="message"
-                placeholder="Mensagem"
-                rows={6}
+                placeholder="Como podemos ajudar?"
+                rows={5}
                 value={formData.message}
                 onChange={handleInputChange}
-                className="w-full p-3 rounded-md bg-[#0b0b0d] border border-gray-800 text-gray-100 focus:border-[#5EE7FF] focus:outline-none transition-colors"
+                aria-invalid={!!errors.message}
+                className="w-full p-3 rounded-lg bg-surface border border-line text-gray-100 placeholder:text-muted focus:border-accent-from focus:outline-none transition-colors"
               />
-              {errors.message && <p className="text-sm text-red-400">{errors.message}</p>}
+              {errors.message && <p className="mt-1 text-sm text-red-400">{errors.message}</p>}
             </div>
 
             {submitStatus.type && (
               <div
-                className={`p-4 rounded-md ${submitStatus.type === 'success'
-                    ? 'bg-green-900/20 border border-green-700 text-green-300'
-                    : 'bg-red-900/20 border border-red-700 text-red-300'
+                className={`p-4 rounded-lg text-sm ${submitStatus.type === 'success'
+                    ? 'bg-emerald-900/20 border border-emerald-800 text-emerald-300'
+                    : 'bg-red-900/20 border border-red-800 text-red-300'
                   }`}
               >
                 {submitStatus.message}
               </div>
             )}
 
-            <div className="flex items-center justify-between flex-wrap gap-4">
-              <div className="text-sm text-gray-400">
-                Nós responderemos em até 2 dias úteis.
-              </div>
-              <button
-                type="submit"
-                disabled={!isFormValid || isSubmitting}
-                className="px-6 py-3 rounded-md bg-gradient-to-r from-[#5EE7FF] to-[#8A5CFF] text-black font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
-              >
-                {isSubmitting ? 'Enviando...' : 'Enviar mensagem'}
-              </button>
+            <div className="flex flex-col gap-3">
+              {recaptchaReady ? (
+                <button
+                  type="submit"
+                  disabled={!isFormValid || isSubmitting}
+                  className="w-full sm:w-auto self-start px-8 py-3 rounded-full bg-accent-gradient text-black font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+                >
+                  {isSubmitting ? 'Enviando...' : 'Enviar mensagem'}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  className="w-full sm:w-auto self-start px-8 py-3 rounded-full border border-line text-muted cursor-not-allowed"
+                >
+                  Verificando segurança...
+                </button>
+              )}
+
+              <p className="text-xs text-muted">
+                Protegido por reCAPTCHA. Este site está sujeito à{' '}
+                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-300">
+                  Política de Privacidade
+                </a>{' '}
+                e aos{' '}
+                <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-300">
+                  Termos de Serviço
+                </a>{' '}
+                do Google.
+              </p>
             </div>
           </form>
 
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-gray-400">
-            <div>
-              <div className="font-semibold text-gray-200">Local</div>
-              <div>São Paulo, Brasil</div>
-            </div>
-          </div>
+          <p className="mt-8 text-sm text-gray-500">São Paulo, Brasil</p>
         </motion.div>
       </div>
+    </section>
+  );
+}
 
-        <style jsx>{`
-          .grecaptcha-badge {
-            visibility: hidden;
-          }
-        `}</style>
-      </section>
-    );
-  }
-
-export default ContactFormContent;
 

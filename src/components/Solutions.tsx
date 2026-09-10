@@ -1,56 +1,106 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import {
   Database,
   Workflow,
   Sparkles,
   TrendingUp,
-  Code2
+  Code2,
 } from 'lucide-react';
 
-
 const solutions = [
-  { title: 'Data Governance & Platforms', desc: 'Governança centralizada, lineage tracking, políticas de conformidade, catalogação automática de dados.', icon: Database },
-  { title: 'DataOps & Automação', desc: 'Pipelines de dados automatizadas, orchestration, transformações e validação em tempo real.', icon: Workflow },
-  { title: 'AI & Copilots Corporativos', desc: 'Assistentes de IA integrados, MLOps, Agentic AI para automação inteligente.', icon: Sparkles },
-  { title: 'Consultoria Estratégica', desc: 'Roadmaps de transformação digital, market intelligence, identificação de use cases, ROI.', icon: TrendingUp },
-  { title: 'Engenharia de Plataformas', desc: 'Custom AI/ML, cloud data architecture, API-first, segurança e compliance.', icon: Code2 }
+  {
+    title: 'Data Governance & Platforms',
+    desc: 'Governança centralizada, lineage e catalogação automática de dados.',
+    icon: Database,
+    span: 'lg:col-span-3',
+  },
+  {
+    title: 'DataOps & Automação',
+    desc: 'Pipelines automatizados, orquestração e validação em tempo real.',
+    icon: Workflow,
+    span: 'lg:col-span-3',
+  },
+  {
+    title: 'AI & Copilots Corporativos',
+    desc: 'Assistentes de IA, MLOps e agentic AI para automação inteligente.',
+    icon: Sparkles,
+    span: 'lg:col-span-2',
+  },
+  {
+    title: 'Engenharia de Plataformas',
+    desc: 'Cloud data architecture, API-first, segurança e compliance.',
+    icon: Code2,
+    span: 'lg:col-span-2',
+  },
+  {
+    title: 'Consultoria Estratégica',
+    desc: 'Roadmaps de transformação digital e identificação de ROI.',
+    icon: TrendingUp,
+    span: 'lg:col-span-2',
+  },
+];
+
+const workSteps = [
+  { step: '01', title: 'Diagnóstico', desc: 'Avaliamos arquitetura, maturidade de dados e riscos operacionais.' },
+  { step: '02', title: 'Roadmap', desc: 'Plano pragmático com KPIs e quick-wins para curto e médio prazo.' },
+  { step: '03', title: 'Execução', desc: 'Squads dedicados entregando de forma iterativa e orientada a valor.' },
 ];
 
 export default function Solutions() {
   return (
-    <section id="solutions" className="py-24 border-t border-gray-900">
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="solutions" className="py-24 border-t border-line">
+      <div className="max-w-6xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-          <h2 className="text-3xl font-bold">Nossas Soluções</h2>
-          <p className="mt-3 text-gray-400 max-w-2xl">Soluções orientadas a resultados — governança de dados, automação, IA, consultoria estratégica e engenharia de plataformas cloud.</p>
+          <h2 className="text-3xl font-bold">Soluções</h2>
+          <p className="mt-3 text-gray-400 max-w-xl">Governança de dados, automação e IA aplicadas a resultado de negócio.</p>
         </motion.div>
 
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-          {solutions.map((s, i) => (
+        <div className="mt-10 grid grid-cols-1 lg:grid-cols-6 gap-4">
+          {solutions.map((solution, i) => (
             <motion.div
-              key={s.title}
+              key={solution.title}
               initial={{ opacity: 0, y: 8 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              className="p-6 rounded-xl border border-gray-800 bg-gradient-to-b from-white/2 to-transparent"
+              transition={{ delay: i * 0.06 }}
+              className={`p-6 rounded-2xl border border-line bg-surface/40 hover:border-gray-700 transition-colors ${solution.span}`}
             >
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold">{s.title}</h3>
-                  <p className="mt-2 text-sm text-gray-300">{s.desc}</p>
-                </div>
-                <div className="ml-4 flex-shrink-0 w-12 h-12 rounded-lg bg-[#111217] flex items-center justify-center border border-gray-800">
-                  {s.icon ? React.createElement(s.icon, { className: 'w-6 h-6 text-[#9FB4FF]' }) :
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M3 12h18" stroke="#9FB4FF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  }
-                </div>
+              <div className="w-10 h-10 rounded-lg bg-white/5 border border-line flex items-center justify-center">
+                <solution.icon className="w-5 h-5 text-accent-from" />
               </div>
+              <h3 className="mt-4 font-semibold">{solution.title}</h3>
+              <p className="mt-2 text-sm text-gray-400">{solution.desc}</p>
             </motion.div>
           ))}
+        </div>
+
+        <div className="mt-20">
+          <motion.h3
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-xl font-semibold"
+          >
+            Como trabalhamos
+          </motion.h3>
+
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {workSteps.map((item, i) => (
+              <motion.div
+                key={item.step}
+                initial={{ opacity: 0, y: 8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.06 }}
+                className="p-6 rounded-2xl border border-line"
+              >
+                <span className="text-sm font-mono text-accent-from">{item.step}</span>
+                <h4 className="mt-3 font-semibold">{item.title}</h4>
+                <p className="mt-2 text-sm text-gray-400">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

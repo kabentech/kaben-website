@@ -1,35 +1,23 @@
 # kaben-website
 Site institucional kaben
 
-## Docker local
-
-O Dockerfile agora aceita a variável de ambiente `VITE_RECAPTCHA_SITE_KEY` no build para que o frontend receba a chave pública do reCAPTCHA.
-
-Para construir a imagem Docker localmente, execute:
+## Desenvolvimento local
 
 ```bash
-export VITE_RECAPTCHA_SITE_KEY=$(grep '^VITE_RECAPTCHA_SITE_KEY=' .env.local | cut -d'=' -f2-)
-docker build -f Dockerfile.vercel --build-arg VITE_RECAPTCHA_SITE_KEY="$VITE_RECAPTCHA_SITE_KEY" -t kaben-vercel-local .
+npm install
+npm run dev
 ```
 
-Em seguida, execute o container usando o arquivo `.env.local` com as variáveis de runtime:
+O frontend roda em `http://localhost:9000`. O endpoint `/api/send-contact-email` é uma Vercel Serverless Function ([api/send-contact-email.js](api/send-contact-email.js)); para testá-lo localmente use a Vercel CLI:
 
 ```bash
-docker run --rm -p 3000:3000 --name kaben-vercel-local-test --env-file .env.local kaben-vercel-local
+npm i -g vercel
+vercel dev
 ```
 
-Se preferir, passe as variáveis explicitamente:
+Configure as variáveis de ambiente em `.env.local` a partir de [.env.example](.env.example) (chaves de reCAPTCHA e credenciais SMTP).
 
-```bash
-docker run --rm -p 3000:3000 --name kaben-vercel-local-test \
-  -e RECAPTCHA_SECRET_KEY=SUA_SECRET_KEY \
-  -e SMTP_HOST=smtp.gmail.com \
-  -e SMTP_PORT=465 \
-  -e SMTP_SECURE=true \
-  -e SMTP_USER=EMAIL_DO_APLICATIVO_GMAIL \
-  -e SMTP_PASS=SENHA_DO_APLICATIVO_GMAIL \
-  -e MAIL_TO=EMAIL_DESTINO_CONTATO \
-  kaben-vercel-local
-```
+## Deploy
 
-> Observação: o `.env.local` não é incluído no contexto do Docker build, então ele só precisa ser fornecido em tempo de execução.
+O deploy é feito na Vercel via `vercel.json` (build estático do Vite + funções serverless em `api/`). Configure as variáveis de ambiente do projeto no painel da Vercel.
+

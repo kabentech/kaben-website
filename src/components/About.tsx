@@ -1,31 +1,35 @@
-import React from 'react';
+import { Fragment } from 'react';
 import { motion } from 'framer-motion';
+
+const stats = [
+  { label: 'Fundação', value: '2025' },
+  { label: 'Times', value: 'Engenharia · Dados · Produto' },
+  { label: 'Expertise', value: 'Data · IA · Cloud' },
+];
 
 export default function About() {
   return (
-    <section id="about" className="py-24 border-t border-gray-900">
-      <div className="max-w-4xl mx-auto px-6 text-center">
-        <motion.div initial={{ opacity: 0, scale: 0.98 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-          <h3 className="text-3xl font-bold">A Kaben</h3>
-          <p className="mt-6 text-gray-300 max-w-2xl mx-auto leading-relaxed">A Kaben nasceu da interseção entre engenharia e estratégia. Nosso propósito é impulsionar empresas com dados, software e governança, transformando informações em vantagem competitiva.</p>
-          
-          <p className="mt-4 text-gray-300 max-w-2xl mx-auto leading-relaxed">Somos especialistas em construir plataformas SaaS B2B escaláveis, arquiteturas de dados modernas e soluções de automação que conectam tecnologia ao resultado de negócio.</p>
+    <section id="about" className="py-24 border-t border-line">
+      <div className="max-w-3xl mx-auto px-6 text-center">
+        <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
+          <h2 className="text-3xl font-bold">A Kaben</h2>
+          <p className="mt-6 text-gray-400 leading-relaxed">
+            Nascemos da interseção entre engenharia e estratégia para transformar dados em vantagem competitiva.
+          </p>
+          <p className="mt-4 text-gray-400 leading-relaxed">
+            Construímos plataformas SaaS B2B escaláveis e automação que conectam tecnologia a resultado de negócio.
+          </p>
 
           <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-8">
-            <div className="text-left">
-              <div className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Fundação</div>
-              <div className="text-lg font-semibold mt-2">2025</div>
-            </div>
-            <div className="hidden sm:block w-px h-12 bg-gray-800" />
-            <div className="text-left">
-              <div className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Times</div>
-              <div className="text-lg font-semibold mt-2">Engenharia • Dados • Produto</div>
-            </div>
-            <div className="hidden sm:block w-px h-12 bg-gray-800" />
-            <div className="text-left">
-              <div className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Expertise</div>
-              <div className="text-lg font-semibold mt-2">Data Engineering • AI • Cloud</div>
-            </div>
+            {stats.map((stat, i) => (
+              <Fragment key={stat.label}>
+                {i > 0 && <div className="hidden sm:block w-px h-10 bg-line" />}
+                <div className="text-left">
+                  <div className="text-xs text-muted uppercase tracking-wider">{stat.label}</div>
+                  <div className="mt-1.5 font-semibold">{stat.value}</div>
+                </div>
+              </Fragment>
+            ))}
           </div>
         </motion.div>
       </div>
