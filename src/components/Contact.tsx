@@ -175,10 +175,10 @@ export default function Contact() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h3 className="text-2xl font-bold">Conecte-se com a Kaben</h3>
+          <h3 className="text-2xl font-bold">Vamos mapear seu desafio</h3>
           <p className="mt-3 text-gray-300">
-            Interessado em modernizar sua plataforma, integrar APIs ou melhorar a
-            governança de dados? Envie uma mensagem e vamos conversar.
+            Quer entender onde dados, IA e automação podem gerar mais impacto na
+            sua operação? Envie uma mensagem e vamos conversar.
           </p>
 
           <form onSubmit={handleSubmit} className="mt-8 grid grid-cols-1 gap-4">

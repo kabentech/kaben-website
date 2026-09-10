@@ -2,9 +2,13 @@ import React from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Clients from './components/Clients';
-import Solutions from './components/Solutions';
+import Problem from './components/Problem';
+import Pillars from './components/Pillars';
+import WhatWeDo from './components/WhatWeDo';
 import Technology from './components/Technology';
-import Consulting from './components/Consulting';
+import HowWeWork from './components/HowWeWork';
+import Outcomes from './components/Outcomes';
+import UseCases from './components/UseCases';
 import About from './components/About';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
@@ -16,9 +20,13 @@ export default function App() {
 
       <main className="pt-24">
         <Hero />
-        <Solutions />
+        <Problem />
+        <Pillars />
+        <WhatWeDo />
         <Technology />
-        <Consulting />
+        <HowWeWork />
+        <Outcomes />
+        <UseCases />
         {/* <Clients /> */}
         <About />
         <Contact />

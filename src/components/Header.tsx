@@ -20,15 +20,16 @@ export default function Header() {
 
         <nav className="hidden md:flex items-center gap-8 text-sm">
           <a href="#hero" className="hover:text-white">Início</a>
-          <a href="#solutions" className="hover:text-white">Soluções</a>
+          <a href="#pillars" className="hover:text-white">Soluções</a>
+          <a href="#what-we-do" className="hover:text-white">O que fazemos</a>
           <a href="#tech" className="hover:text-white">Tecnologia</a>
-          <a href="#consulting" className="hover:text-white">Consultoria</a>
+          <a href="#how-we-work" className="hover:text-white">Como trabalhamos</a>
           <a href="#about" className="hover:text-white">Sobre</a>
           <a href="#contact" className="hover:text-white">Contato</a>
         </nav>
 
         <div className="flex items-center gap-3">
-          <a href="#contact" className="hidden md:inline-block px-4 py-2 rounded-md bg-gradient-to-r from-[#5EE7FF] to-[#8A5CFF] text-black font-medium hover:opacity-95">Fale conosco</a>
+          <a href="#contact" className="hidden md:inline-block px-4 py-2 rounded-md bg-gradient-to-r from-[#5EE7FF] to-[#8A5CFF] text-black font-medium hover:opacity-95">Vamos mapear seu desafio</a>
           <button className="inline-flex items-center gap-2 p-2 rounded-md border border-gray-800 hover:bg-white/3">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 2L12 12" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
