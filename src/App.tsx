@@ -1,4 +1,5 @@
 import React from 'react';
+import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Clients from './components/Clients';
@@ -14,29 +15,33 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 
 export default function App() {
+  const recaptchaKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY || '';
+
   return (
-    <div className="min-h-screen bg-[#08070A] text-gray-200 antialiased scroll-smooth">
-      <Header />
+    <GoogleReCaptchaProvider reCaptchaKey={recaptchaKey}>
+      <div className="min-h-screen bg-[#08070A] text-gray-200 antialiased scroll-smooth">
+        <Header />
 
-      <main className="pt-24">
-        <Hero />
-        <Problem />
-        <Pillars />
-        <WhatWeDo />
-        <Technology />
-        <HowWeWork />
-        <Outcomes />
-        <UseCases />
-        {/* <Clients /> */}
-        <About />
-        <Contact />
-        <Footer />
-      </main>
+        <main className="pt-24">
+          <Hero />
+          <Problem />
+          <Pillars />
+          <WhatWeDo />
+          <Technology />
+          <HowWeWork />
+          <Outcomes />
+          <UseCases />
+          {/* <Clients /> */}
+          <About />
+          <Contact />
+          <Footer />
+        </main>
 
-      <style jsx>{`
-        html { scroll-behavior: smooth; }
-        ::selection { background: rgba(122, 88, 255, 0.25); }
-      `}</style>
-    </div>
+        <style jsx>{`
+          html { scroll-behavior: smooth; }
+          ::selection { background: rgba(122, 88, 255, 0.25); }
+        `}</style>
+      </div>
+    </GoogleReCaptchaProvider>
   );
 }

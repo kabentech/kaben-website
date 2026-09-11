@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* reCAPTCHA v3: esconder badge (aviso é exibido no formulário) */
+.grecaptcha-badge {
+  visibility: hidden;
+}

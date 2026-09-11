@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import ReCAPTCHA from 'react-google-recaptcha';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -18,6 +18,8 @@ type ContactFormErrors = {
 };
 
 export default function Contact() {
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
   const [formData, setFormData] = useState<ContactFormData>({
     name: '',
     email: '',
@@ -29,16 +31,11 @@ export default function Contact() {
     email: '',
     message: '',
   });
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isRecaptchaLoading, setIsRecaptchaLoading] = useState(true);
   const [submitStatus, setSubmitStatus] = useState<{
     type: 'success' | 'error' | null;
     message: string;
   }>({ type: null, message: '' });
-  const recaptchaRef = useRef<ReCAPTCHA>(null);
-
-  const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 
   const validateForm = () => {
     const newErrors = { name: '', email: '', message: '' };
@@ -77,17 +74,6 @@ export default function Contact() {
     }));
   };
 
-  const handleRecaptchaChange = (token: string | null) => {
-    setRecaptchaToken(token);
-    setIsRecaptchaLoading(false);
-    setSubmitStatus({ type: null, message: '' });
-  };
-
-  const handleRecaptchaExpired = () => {
-    setRecaptchaToken(null);
-    setIsRecaptchaLoading(false);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -99,18 +85,16 @@ export default function Contact() {
       return;
     }
 
-    if (!recaptchaToken) {
-      setSubmitStatus({
-        type: 'error',
-        message: 'Por favor, complete o reCAPTCHA.',
-      });
-      return;
-    }
-
     setIsSubmitting(true);
     setSubmitStatus({ type: null, message: '' });
 
     try {
+      if (!executeRecaptcha) {
+        throw new Error('reCAPTCHA não está configurado');
+      }
+
+      const token = await executeRecaptcha('submit');
+
       const response = await fetch('/api/send-contact-email', {
         method: 'POST',
         headers: {
@@ -121,7 +105,7 @@ export default function Contact() {
           email: formData.email.trim(),
           company: formData.company.trim(),
           message: formData.message.trim(),
-          recaptchaToken,
+          recaptchaToken: token,
         }),
       });
 
@@ -139,8 +123,6 @@ export default function Contact() {
           message: successMessage,
         });
         setFormData({ name: '', email: '', company: '', message: '' });
-        setRecaptchaToken(null);
-        recaptchaRef.current?.reset();
       } else {
         const errorMessage = typeof data === 'string'
           ? data
@@ -166,8 +148,7 @@ export default function Contact() {
   const isFormValid =
     !!formData.name.trim() &&
     EMAIL_REGEX.test(formData.email.trim()) &&
-    !!formData.message.trim() &&
-    !!recaptchaToken;
+    !!formData.message.trim();
 
   return (
     <section id="contact" className="py-24 border-t border-gray-900">
@@ -230,22 +211,6 @@ export default function Contact() {
               {errors.message && <p className="text-sm text-red-400">{errors.message}</p>}
             </div>
 
-            {recaptchaSiteKey ? (
-              <div className="flex justify-end">
-                <ReCAPTCHA
-                  ref={recaptchaRef}
-                  sitekey={recaptchaSiteKey}
-                  onChange={handleRecaptchaChange}
-                  onExpired={handleRecaptchaExpired}
-                  theme="dark"
-                />
-              </div>
-            ) : (
-              <div className="text-sm text-red-400">
-                A chave do reCAPTCHA não está configurada.
-              </div>
-            )}
-
             {submitStatus.type && (
               <div
                 className={`p-4 rounded-md ${submitStatus.type === 'success'
@@ -262,22 +227,9 @@ export default function Contact() {
                 Nós responderemos em até 2 dias úteis.
               </div>
 
-              {!recaptchaToken && isRecaptchaLoading && (
-                <div className="text-sm text-gray-400 italic">
-                  Aguardando validação do reCAPTCHA...
-                </div>
-              )}
-
-              {!recaptchaToken && !isRecaptchaLoading && (
-                <div className="text-sm text-amber-400">
-                  Por favor, complete o reCAPTCHA acima.
-                </div>
-              )}
-
               <button
                 type="submit"
-                disabled={!isFormValid || isSubmitting}
-                hidden={!recaptchaToken}
+                disabled={isFormValid === false || isSubmitting}
                 className="px-6 py-3 rounded-md bg-gradient-to-r from-[#5EE7FF] to-[#8A5CFF] text-black font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
               >
                 {isSubmitting ? 'Enviando...' : 'Enviar mensagem'}
@@ -290,6 +242,29 @@ export default function Contact() {
               <div className="font-semibold text-gray-200">Local</div>
               <div>São Paulo, Brasil</div>
             </div>
+          </div>
+
+          {/* reCAPTCHA Badge Alternative - Google requires visible attribution */}
+          <div className="mt-8 text-xs text-gray-500 text-center">
+            Este site é protegido por reCAPTCHA e as{' '}
+            <a
+              href="https://policies.google.com/privacy?hl=pt-br"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-gray-400 transition-colors"
+            >
+              Políticas de Privacidade
+            </a>
+            {' '}e{' '}
+            <a
+              href="https://policies.google.com/terms?hl=pt-br"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-gray-400 transition-colors"
+            >
+              Termos de Serviço
+            </a>
+            {' '}do Google se aplicam.
           </div>
         </motion.div>
       </div>
